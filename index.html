@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة الإجازات</title>
+    <!-- Bootstrap RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            background-color: #343a40;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            padding-top: 20px;
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.75);
+            padding: 10px 20px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .sidebar .nav-link:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .sidebar .nav-link.active {
+            color: white;
+            background-color: #007bff;
+        }
+        .sidebar .nav-link i {
+            margin-left: 10px;
+        }
+        .main-content {
+            margin-right: 250px;
+            padding: 20px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .badge-primary {
+            background-color: #007bff;
+        }
+        .badge-success {
+            background-color: #28a745;
+        }
+        .badge-danger {
+            background-color: #dc3545;
+        }
+        .badge-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .notification-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 3px 6px;
+            border-radius: 50%;
+            background-color: #dc3545;
+            color: white;
+            font-size: 0.7rem;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .leave-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .status-pending {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .status-approved {
+            background-color: #28a745;
+            color: white;
+        }
+        .status-rejected {
+            background-color: #dc3545;
+            color: white;
+        }
+        .status-cancelled {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- القائمة الجانبية -->
+    <div class="sidebar col-md-3 col-lg-2 d-md-block">
+        <div class="text-center mb-4">
+            <h4>نظام إدارة الإجازات</h4>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="#dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    لوحة التحكم
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#leave-requests">
+                    <i class="fas fa-calendar-alt"></i>
+                    طلبات الإجازة
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#leave-balance">
+                    <i class="fas fa-calculator"></i>
+                    رصيد الإجازات
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#approvals">
+                    <i class="fas fa-check-circle"></i>
+                    الموافقات
+                    <span class="notification-badge">3</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#reports">
+                    <i class="fas fa-chart-bar"></i>
+                    التقارير
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#settings">
+                    <i class="fas fa-cog"></i>
+                    الإعدادات
+                </a>
+            </li>
+            <li class="nav-item mt-5">
+                <a class="nav-link text-danger" href="#logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    تسجيل الخروج
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="main-content">
+        <!-- شريط التنقل العلوي -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white mb-4 rounded shadow-sm">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#notifications">
+                                <i class="fas fa-bell position-relative">
+                                    <span class="notification-badge">5</span>
+                                </i>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="d-flex align-items-center">
+                        <div class="user-avatar">أ</div>
+                        <div>
+                            <div class="fw-bold">أحمد محمد</div>
+                            <div class="small text-muted">مطور برمجيات</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- لوحة التحكم -->
+        <div id="dashboard">
+            <h2 class="mb-4">لوحة التحكم</h2>
+            
+            <!-- ملخص الإحصائيات -->
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card text-white bg-primary">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">رصيد الإجازة السنوية</h6>
+                                    <h2 class="mb-0">15</h2>
+                                    <div class="small">من أصل 21 يوم</div>
+                                </div>
+                                <i class="fas fa-calendar-day fa-3x opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">الإجازات الموافق عليها</h6>
+                                    <h2 class="mb-0">3</h2>
+                                    <div class="small">هذا العام</div>
+                                </div>
+                                <i class="fas fa-check-circle fa-3x opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">طلبات قيد الانتظار</h6>
+                                    <h2 class="mb-0">1</h2>
+                                    <div class="small">بانتظار الموافقة</div>
+                                </div>
+                                <i class="fas fa-hourglass-half fa-3x opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-danger">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">الإشعارات الجديدة</h6>
+                                    <h2 class="mb-0">5</h2>
+                                    <div class="small">غير مقروءة</div>
+                                </div>
+                                <i class="fas fa-bell fa-3x opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- طلب إجازة جديد -->
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">طلب إجازة جديد</h5>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="leaveType" class="form-label">نوع الإجازة</label>
+                                <select class="form-select" id="leaveType" required>
+                                    <option value="" selected disabled>اختر نوع الإجازة</option>
+                                    <option value="1">إجازة سنوية</option>
+                                    <option value="2">إجازة مرضية</option>
+                                    <option value="3">إجازة طارئة</option>
+                                    <option value="4">إجازة أمومة</option>
+                                    <option value="5">إجازة بدون راتب</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="totalDays" class="form-label">عدد الأيام</label>
+                                <input type="number" class="form-control" id="totalDays" readonly value="0">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">تاريخ البداية</label>
+                                <input type="date" class="form-control" id="startDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="endDate" class="form-label">تاريخ النهاية</label>
+                                <input type="date" class="form-control" id="endDate" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="reason" class="form-label">سبب الإجازة</label>
+                            <textarea class="form-control" id="reason" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="attachment" class="form-label">المرفقات (اختياري)</label>
+                            <input class="form-control" type="file" id="attachment">
+                            <div class="form-text">يمكنك إرفاق ملفات بصيغة PDF أو صور</div>
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="reset" class="btn btn-light">إلغاء</button>
+                            <button type="submit" class="btn btn-primary">تقديم الطلب</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- آخر الطلبات -->
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">آخر طلبات الإجازة</h5>
+                    <a href="#leave-requests" class="btn btn-sm btn-outline-primary">عرض الكل</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>نوع الإجازة</th>
+                                    <th>تاريخ البداية</th>
+                                    <th>تاريخ النهاية</th>
+                                    <th>عدد الأيام</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>إجازة سنوية</td>
+                                    <td>15/05/2025</td>
+                                    <td>20/05/2025</td>
+                                    <td>6</td>
+                                    <td><span class="leave-status status-pending">قيد الانتظار</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-danger">إلغاء</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>إجازة مرضية</td>
+                                    <td>01/04/2025</td>
+                                    <td>03/04/2025</td>
+                                    <td>3</td>
+                                    <td><span class="leave-status status-approved">تمت الموافقة</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">عرض</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>إجازة طارئة</td>
+                                    <td>15/03/2025</td>
+                                    <td>15/03/2025</td>
+                                    <td>1</td>
+                                    <td><span class="leave-status status-rejected">مرفوض</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">عرض</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الإشعارات -->
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">آخر الإشعارات</h5>
+                    <a href="#notifications" class="btn btn-sm btn-outline-primary">عرض الكل</a>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">تمت الموافقة على طلب الإجازة</h6>
+                                <small class="text-muted">منذ 3 ساعات</small>
+                            </div>
+                            <p class="mb-1">تمت الموافقة على طلب الإجازة المرضية من 01/04/2025 إلى 03/04/2025</p>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">تم رفض طلب الإجازة</h6>
+                                <small class="text-muted">منذ 2 أيام</small>
+                            </div>
+                            <p class="mb-1">تم رفض طلب الإجازة الطارئة ليوم 15/03/2025 بسبب ضغط العمل</p>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">تحديث رصيد الإجازات</h6>
+                                <small class="text-muted">منذ 5 أيام</small>
+                            </div>
+                            <p class="mb-1">تم تحديث رصيد إجازاتك السنوية. الرصيد الحالي: 15 يوم</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // حساب عدد أيام الإجازة
+        document.addEventListener('DOMContentLoaded', function() {
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            const totalDaysInput = document.getElementById('totalDays');
+            
+            function calculateDays() {
+                if (startDateInput.value && endDateInput.value) {
+                    const startDate = new Date(startDateInput.value);
+                    const endDate = new Date(endDateInput.value);
+                    
+                    if (endDate >= startDate) {
+                        const diffTime = Math.abs(endDate - startDate);
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // شامل يوم البداية والنهاية
+                        totalDaysInput.value = diffDays;
+                    } else {
+                        totalDaysInput.value = 0;
+                    }
+                }
+            }
+            
+            startDateInput.addEventListener('change', calculateDays);
+            endDateInput.addEventListener('change', calculateDays);
+        });
+    </script>
+</body>
+</html>

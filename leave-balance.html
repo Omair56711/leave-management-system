@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رصيد الإجازات - نظام إدارة الإجازات</title>
+    <!-- Bootstrap RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            background-color: #343a40;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            padding-top: 20px;
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.75);
+            padding: 10px 20px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .sidebar .nav-link:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .sidebar .nav-link.active {
+            color: white;
+            background-color: #007bff;
+        }
+        .sidebar .nav-link i {
+            margin-left: 10px;
+        }
+        .main-content {
+            margin-right: 250px;
+            padding: 20px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: bold;
+        }
+        .notification-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 3px 6px;
+            border-radius: 50%;
+            background-color: #dc3545;
+            color: white;
+            font-size: 0.7rem;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .progress {
+            height: 20px;
+            border-radius: 10px;
+        }
+        .progress-bar {
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- القائمة الجانبية -->
+    <div class="sidebar col-md-3 col-lg-2 d-md-block">
+        <div class="text-center mb-4">
+            <h4>نظام إدارة الإجازات</h4>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">
+                    <i class="fas fa-tachometer-alt"></i>
+                    لوحة التحكم
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="leave-requests.html">
+                    <i class="fas fa-calendar-alt"></i>
+                    طلبات الإجازة
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="leave-balance.html">
+                    <i class="fas fa-calculator"></i>
+                    رصيد الإجازات
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="approvals.html">
+                    <i class="fas fa-check-circle"></i>
+                    الموافقات
+                    <span class="notification-badge">3</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="reports.html">
+                    <i class="fas fa-chart-bar"></i>
+                    التقارير
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="settings.html">
+                    <i class="fas fa-cog"></i>
+                    الإعدادات
+                </a>
+            </li>
+            <li class="nav-item mt-5">
+                <a class="nav-link text-danger" href="#logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    تسجيل الخروج
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="main-content">
+        <!-- شريط التنقل العلوي -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white mb-4 rounded shadow-sm">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="notifications.html">
+                                <i class="fas fa-bell position-relative">
+                                    <span class="notification-badge">5</span>
+                                </i>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="d-flex align-items-center">
+                        <div class="user-avatar">أ</div>
+                        <div>
+                            <div class="fw-bold">أحمد محمد</div>
+                            <div class="small text-muted">مطور برمجيات</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- رصيد الإجازات -->
+        <div id="leave-balance">
+            <h2 class="mb-4">رصيد الإجازات</h2>
+            
+            <!-- فلتر السنة -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <label for="yearFilter" class="form-label">السنة</label>
+                            <select class="form-select" id="yearFilter">
+                                <option value="2025" selected>2025</option>
+                                <option value="2024">2024</option>
+                                <option value="2023">2023</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8 text-md-end mt-3 mt-md-0">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-download"></i> تصدير البيانات
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- بطاقات رصيد الإجازات -->
+            <div class="row">
+                <!-- الإجازة السنوية -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">الإجازة السنوية</h5>
+                            <span class="badge bg-primary">مدفوعة</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الرصيد الإجمالي:</span>
+                                <span class="fw-bold">21 يوم</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الأيام المستخدمة:</span>
+                                <span class="fw-bold">6 أيام</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الرصيد المتبقي:</span>
+                                <span class="fw-bold text-primary">15 يوم</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الأيام المرحلة من السنة السابقة:</span>
+                                <span class="fw-bold">0 يوم</span>
+                            </div>
+                            <div class="mt-3">
+                                <div class="progress mb-2">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 71.4%;" aria-valuenow="71.4" aria-valuemin="0" aria-valuemax="100">71.4%</div>
+                                </div>
+                                <div class="small text-muted text-center">15 يوم متبقي من أصل 21 يوم</div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <button class="btn btn-sm btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#leaveHistoryModal" data-leave-type="سنوية">
+                                <i class="fas fa-history"></i> سجل الإجازات
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- الإجازة المرضية -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">الإجازة المرضية</h5>
+                            <span class="badge bg-primary">مدفوعة</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الرصيد الإجمالي:</span>
+                                <span class="fw-bold">14 يوم</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الأيام المستخدمة:</span>
+                                <span class="fw-bold">3 أيام</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الرصيد المتبقي:</span>
+                                <span class="fw-bold text-primary">11 يوم</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الأيام المرحلة من السنة السابقة:</span>
+                                <span class="fw-bold">0 يوم</span>
+                            </div>
+                            <div class="mt-3">
+                                <div class="progress mb-2">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 78.6%;" aria-valuenow="78.6" aria-valuemin="0" aria-valuemax="100">78.6%</div>
+                                </div>
+                                <div class="small text-muted text-center">11 يوم متبقي من أصل 14 يوم</div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <button class="btn btn-sm btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#leaveHistoryModal" data-leave-type="مرضية">
+                                <i class="fas fa-history"></i> سجل الإجازات
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- الإجازة الطارئة -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">الإجازة الطارئة</h5>
+                            <span class="badge bg-primary">مدفوعة</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الرصيد الإجمالي:</span>
+                                <span class="fw-bold">7 أيام</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الأيام المستخدمة:</span>
+                                <span class="fw-bold">1 يوم</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الرصيد المتبقي:</span>
+                                <span class="fw-bold text-primary">6 أيام</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الأيام المرحلة من السنة السابقة:</span>
+                                <span class="fw-bold">0 يوم</span>
+                            </div>
+                            <div class="mt-3">
+                                <div class="progress mb-2">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 85.7%;" aria-valuenow="85.7" aria-valuemin="0" aria-valuemax="100">85.7%</div>
+                                </div>
+                                <div class="small text-muted text-center">6 أيام متبقية من أصل 7 أيام</div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <button class="btn btn-sm btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#leaveHistoryModal" data-leave-type="طارئة">
+                                <i class="fas fa-history"></i> سجل الإجازات
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- إجازة الأمومة -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">إجازة الأمومة</h5>
+                            <span class="badge bg-primary">مدفوعة</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الرصيد الإجمالي:</span>
+                                <span class="fw-bold">90 يوم</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الأيام المستخدمة:</span>
+                                <span class="fw-bold">0 يوم</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الرصيد المتبقي:</span>
+                                <span class="fw-bold text-primary">90 يوم</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الأيام المرحلة من السنة السابقة:</span>
+                                <span class="fw-bold">0 يوم</span>
+                            </div>
+                            <div class="mt-3">
+                                <div class="progress mb-2">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div>
+                                </div>
+                                <div class="small text-muted text-center">90 يوم متبقي من أصل 90 يوم</div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <button class="btn btn-sm btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#leaveHistoryModal" data-leave-type="أمومة">
+                                <i class="fas fa-history"></i> سجل الإجازات
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- إجازة بدون راتب -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">إجازة بدون راتب</h5>
+                            <span class="badge bg-secondary">غير مدفوعة</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الرصيد الإجمالي:</span>
+                                <span class="fw-bold">30 يوم</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الأيام المستخدمة:</span>
+                                <span class="fw-bold">0 يوم</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الرصيد المتبقي:</span>
+                                <span class="fw-bold text-primary">30 يوم</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>الأيام المرحلة من السنة السابقة:</span>
+                                <span class="fw-bold">0 يوم</span>
+                            </div>
+                            <div class="mt-3">
+                                <div class="progress mb-2">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div>
+                                </div>
+                                <div class="small text-muted text-center">30 يوم متبقي من أصل 30 يوم</div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <button class="btn btn-sm btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#leaveHistoryModal" data-leave-type="بدون راتب">
+                                <i class="fas fa-history"></i> سجل الإجازات
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- معلومات إضافية -->
+            <div class="card mt-2">
+                <div class="card-header">
+                    <h5 class="mb-0">معلومات إضافية</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle"></i> سياسة الإجازات</h6>
+                        <ul>
+                            <li>يتم تحديث رصيد الإجازات السنوية في بداية كل سنة.</li>
+                            <li>يمكن ترحيل الإجازات السنوية غير المستخدمة بحد أقصى 5 أيام للسنة التالية.</li>
+                            <li>يجب تقديم طلب الإجازة قبل موعدها بـ 3 أيام على الأقل.</li>
+                            <li>الإجازات المرضية تتطلب تقديم تقرير طبي.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة سجل الإجازات -->
+    <div class="modal fade" id="leaveHistoryModal" tabindex="-1" aria-labelledby="leaveHistoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="leaveHistoryModalLabel">سجل الإجازات - <span id="leaveTypeTitle">سنوية</span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>تاريخ البداية</th>
+                                    <th>تاريخ النهاية</th>
+                                    <th>عدد الأيام</th>
+                                    <th>السبب</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaveHistoryTableBody">
+                                <!-- سيتم تحديث هذا الجزء ديناميكياً حسب نوع الإجازة المختار -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">إغلاق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // تحديث سجل الإجازات حسب النوع المختار
+        document.addEventListener('DOMContentLoaded', function() {
+            const leaveHistoryModal = document.getElementById('leaveHistoryModal');
+            const leaveTypeTitle = document.getElementById('leaveTypeTitle');
+            const leaveHistoryTableBody = document.getElementById('leaveHistoryTableBody');
+            
+            if (leaveHistoryModal) {
+                leaveHistoryModal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
+                    const leaveType = button.getAttribute('data-leave-type');
+                    leaveTypeTitle.textContent = leaveType;
+                    
+                    // بيانات مختلفة حسب نوع الإجازة
+                    let historyData = [];
+                    
+                    if (leaveType === 'سنوية') {
+                        historyData = [
+                            { startDate: '15/05/2025', endDate: '20/05/2025', days: 6, reason: 'إجازة عائلية', status: 'قيد الانتظار' },
+                            { startDate: '01/02/2025', endDate: '05/02/2025', days: 5, reason: 'سفر', status: 'تمت الموافقة' }
+                        ];
+                    } else if (leaveType === 'مرضية') {
+                        historyData = [
+                            { startDate: '01/04/2025', endDate: '03/04/2025', days: 3, reason: 'وعكة صحية', status: 'تمت الموافقة' }
+                        ];
+                    } else if (leaveType === 'طارئة') {
+                        historyData = [
+                            { startDate: '15/03/2025', endDate: '15/03/2025', days: 1, reason: 'ظرف طارئ', status: 'مرفوض' }
+                        ];
+                    }
+                    
+                    // تحديث الجدول
+                    leaveHistoryTableBody.innerHTML = '';
+                    
+                    if (historyData.length === 0) {
+                        const row = document.createElement('tr');
+                        row.innerHTML = '<td colspan="5" class="text-center">لا توجد إجازات مسجلة من هذا النوع</td>';
+                        leaveHistoryTableBody.appendChild(row);
+                    } else {
+                        historyData.forEach(item => {
+                            const row = document.createElement('tr');
+                            
+                            let statusClass = '';
+                            if (item.status === 'تمت الموافقة') {
+                                statusClass = 'bg-success text-white';
+                            } else if (item.status === 'مرفوض') {
+                                statusClass = 'bg-danger text-white';
+                            } else if (item.status === 'قيد الانتظار') {
+                                statusClass = 'bg-warning text-dark';
+                            }
+                            
+                            row.innerHTML = `
+                                <td>${item.startDate}</td>
+                                <td>${item.endDate}</td>
+                                <td>${item.days}</td>
+                                <td>${item.reason}</td>
+                                <td><span class="badge ${statusClass}">${item.status}</span></td>
+                            `;
+                            
+                            leaveHistoryTableBody.appendChild(row);
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

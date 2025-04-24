@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طلبات الإجازة - نظام إدارة الإجازات</title>
+    <!-- Bootstrap RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- القائمة الجانبية -->
+    <div class="sidebar col-md-3 col-lg-2 d-md-block">
+        <div class="text-center mb-4">
+            <h4>نظام إدارة الإجازات</h4>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">
+                    <i class="fas fa-tachometer-alt"></i>
+                    لوحة التحكم
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="leave-requests.html">
+                    <i class="fas fa-calendar-alt"></i>
+                    طلبات الإجازة
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="leave-balance.html">
+                    <i class="fas fa-calculator"></i>
+                    رصيد الإجازات
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="approvals.html">
+                    <i class="fas fa-check-circle"></i>
+                    الموافقات
+                    <span class="notification-badge">3</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="reports.html">
+                    <i class="fas fa-chart-bar"></i>
+                    التقارير
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="settings.html">
+                    <i class="fas fa-cog"></i>
+                    الإعدادات
+                </a>
+            </li>
+            <li class="nav-item mt-5">
+                <a class="nav-link text-danger" href="#logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    تسجيل الخروج
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="main-content">
+        <!-- شريط التنقل العلوي -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white mb-4 rounded shadow-sm">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="notifications.html">
+                                <i class="fas fa-bell position-relative">
+                                    <span class="notification-badge">5</span>
+                                </i>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="d-flex align-items-center">
+                        <div class="user-avatar">أ</div>
+                        <div>
+                            <div class="fw-bold">أحمد محمد</div>
+                            <div class="small text-muted">مطور برمجيات</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- طلبات الإجازة -->
+        <div id="leave-requests">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>طلبات الإجازة</h2>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newLeaveRequestModal">
+                    <i class="fas fa-plus-circle"></i> طلب إجازة جديد
+                </button>
+            </div>
+            
+            <!-- فلاتر البحث -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form class="row g-3">
+                        <div class="col-md-3">
+                            <label for="filterStatus" class="form-label">الحالة</label>
+                            <select class="form-select" id="filterStatus">
+                                <option value="">الكل</option>
+                                <option value="pending">قيد الانتظار</option>
+                                <option value="approved">تمت الموافقة</option>
+                                <option value="rejected">مرفوض</option>
+                                <option value="cancelled">ملغي</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterType" class="form-label">نوع الإجازة</label>
+                            <select class="form-select" id="filterType">
+                                <option value="">الكل</option>
+                                <option value="1">إجازة سنوية</option>
+                                <option value="2">إجازة مرضية</option>
+                                <option value="3">إجازة طارئة</option>
+                                <option value="4">إجازة أمومة</option>
+                                <option value="5">إجازة بدون راتب</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterDateFrom" class="form-label">من تاريخ</label>
+                            <input type="date" class="form-control" id="filterDateFrom">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterDateTo" class="form-label">إلى تاريخ</label>
+                            <input type="date" class="form-control" id="filterDateTo">
+                        </div>
+                        <div class="col-12 text-end">
+                            <button type="button" class="btn btn-light">إعادة تعيين</button>
+                            <button type="submit" class="btn btn-primary">تطبيق الفلتر</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- جدول طلبات الإجازة -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>نوع الإجازة</th>
+                                    <th>تاريخ البداية</th>
+                                    <th>تاريخ النهاية</th>
+                                    <th>عدد الأيام</th>
+                                    <th>تاريخ الطلب</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>إجازة سنوية</td>
+                                    <td>15/05/2025</td>
+                                    <td>20/05/2025</td>
+                                    <td>6</td>
+                                    <td>10/04/2025</td>
+                                    <td><span class="leave-status status-pending">قيد الانتظار</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewLeaveRequestModal">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-times-circle"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>إجازة مرضية</td>
+                                    <td>01/04/2025</td>
+                                    <td>03/04/2025</td>
+                                    <td>3</td>
+                                    <td>30/03/2025</td>
+                                    <td><span class="leave-status status-approved">تمت الموافقة</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewLeaveRequestModal">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>إجازة طارئة</td>
+                                    <td>15/03/2025</td>
+                                    <td>15/03/2025</td>
+                                    <td>1</td>
+                                    <td>14/03/2025</td>
+                                    <td><span class="leave-status status-rejected">مرفوض</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewLeaveRequestModal">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>إجازة سنوية</td>
+                                    <td>01/02/2025</td>
+                                    <td>05/02/2025</td>
+                                    <td>5</td>
+                                    <td>20/01/2025</td>
+                                    <td><span class="leave-status status-approved">تمت الموافقة</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewLeaveRequestModal">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>إجازة بدون راتب</td>
+                                    <td>10/01/2025</td>
+                                    <td>15/01/2025</td>
+                                    <td>6</td>
+                                    <td>01/01/2025</td>
+                                    <td><span class="leave-status status-cancelled">ملغي</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewLeaveRequestModal">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- ترقيم الصفحات -->
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center mt-4">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">السابق</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">التالي</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة طلب إجازة جديد -->
+    <div class="modal fade" id="newLeaveRequestModal" tabindex="-1" aria-labelledby="newLeaveRequestModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newLeaveRequestModalLabel">طلب إجازة جديد</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="modalLeaveType" class="form-label">نوع الإجازة</label>
+                                <select class="form-select" id="modalLeaveType" required>
+                                    <option value="" selected disabled>اختر نوع الإجازة</option>
+                                    <option value="1">إجازة سنوية</option>
+                                    <option value="2">إجازة مرضية</option>
+                                    <option value="3">إجازة طارئة</option>
+                                    <option value="4">إجازة أمومة</option>
+                                    <option value="5">إجازة بدون راتب</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="modalTotalDays" class="form-label">عدد الأيام</label>
+                                <input type="number" class="form-control" id="modalTotalDays" readonly value="0">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="modalStartDate" class="form-label">تاريخ البداية</label>
+                                <input type="date" class="form-control" id="modalStartDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="modalEndDate" class="form-label">تاريخ النهاية</label>
+                                <input type="date" class="form-control" id="modalEndDate" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modalReason" class="form-label">سبب الإجازة</label>
+                            <textarea class="form-control" id="modalReason" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modalAttachment" class="form-label">المرفقات (اختياري)</label>
+                            <input class="form-control" type="file" id="modalAttachment">
+                            <div class="form-text">يمكنك إرفاق ملفات بصيغة PDF أو صور</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="button" class="btn btn-primary">تقديم الطلب</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة عرض تفاصيل طلب الإجازة -->
+    <div class="modal fade" id="viewLeaveRequestModal" tabindex="-1" aria-labelledby="viewLeaveRequestModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewLeaveRequestModalLabel">تفاصيل طلب الإجازة</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>نوع الإجازة:</strong> إجازة سنوية</p>
+                            <p><strong>تاريخ البداية:</strong> 15/05/2025</p>
+                            <p><strong>تاريخ النهاية:</strong> 20/05/2025</p>
+                            <p><strong>عدد الأيام:</strong> 6</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>تاريخ الطلب:</strong> 10/04/2025</p>
+                            <p><strong>الحالة:</strong> <span class="leave-status status-pending">قيد الانتظار</span></p>
+                            <p><strong>المرفقات:</strong> <a href="#">عرض المرفق</a></p>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <p><strong>سبب الإجازة:</strong></p>
+                        <p>إجازة عائلية للسفر مع الأسرة.</p>
+                    </div>
+                    <hr>
+                    <h6>سجل الموافقات</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>المرحلة</th>
+                                    <th>الموافق</th>
+                                    <th>الحالة</th>
+                                    <th>التعليقات</th>
+                                    <th>تاريخ الإجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>موافقة المدير المباشر</td>
+                                    <td>محمد علي</td>
+                                    <td><span class="badge bg-success">تمت الموافقة</span></td>
+                                    <td>موافق على الإجازة</td>
+                                    <td>12/04/2025</td>
+                                </tr>
+                                <tr>
+                                    <td>موافقة الموارد البشرية</td>
+                                    <td>-</td>
+                                    <td><span class="badge bg-warning text-dark">قيد الانتظار</span></td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">إغلاق</button>
+                    <button type="button" class="btn btn-danger">إلغاء الطلب</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // حساب عدد أيام الإجازة
+        document.addEventListener('DOMContentLoaded', function() {
+            const modalStartDateInput = document.getElementById('modalStartDate');
+            const modalEndDateInput = document.getElementById('modalEndDate');
+            const modalTotalDaysInput = document.getElementById('modalTotalDays');
+            
+            function calculateDays() {
+                if (modalStartDateInput.value && modalEndDateInput.value) {
+                    const startDate = new Date(modalStartDateInput.value);
+                    const endDate = new Date(modalEndDateInput.value);
+                    
+                    if (endDate >= startDate) {
+                        const diffTime = Math.abs(endDate - startDate);
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // شامل يوم البداية والنهاية
+                        modalTotalDaysInput.value = diffDays;
+                    } else {
+                        modalTotalDaysInput.value = 0;
+                    }
+                }
+            }
+            
+            if (modalStartDateInput && modalEndDateInput) {
+                modalStartDateInput.addEventListener('change', calculateDays);
+                modalEndDateInput.addEventListener('change', calculateDays);
+            }
+        });
+    </script>
+</body>
+</html>
